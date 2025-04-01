@@ -1,0 +1,67 @@
+﻿@model List<WorkoutPlanner.Models.ExerciseTemplate>
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<h2 class="mb-4">Exercise Templates</h2>
+
+<!-- Search and Filters -->
+<form asp-action="Index" method="get" class="mb-4">
+    <div class="row g-3">
+        <div class="col-md-4">
+            <input name="searchString" class="form-control" placeholder="Search exercises..." value="@ViewBag.SearchString" />
+        </div>
+        <div class="col-md-3">
+            <select name="muscleGroup" class="form-select">
+                <option value="">All Muscle Groups</option>
+                @foreach (var mg in ViewBag.MuscleGroups)
+                {
+                    <option value="@mg">@mg</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select name="type" class="form-select">
+                <option value="">All Types</option>
+                @foreach (var t in ViewBag.Types)
+                {
+                    <option value="@t">@t</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Filter</button>
+        </div>
+    </div>
+</form>
+
+<!-- Exercise List -->
+<div class="row">
+    @foreach (var template in Model)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">@template.Name</h5>
+                    <p class="card-text">
+                        <strong>Muscle:</strong> @template.MuscleGroup<br />
+                        <strong>Type:</strong> @template.Type<br />
+                        <strong>Equipment:</strong> @template.Equipment<br />
+                        <strong>Difficulty:</strong> @template.Difficulty/5
+                    </p>
+                    <a asp-action="Details" asp-route-id="@template.Id" class="btn btn-outline-primary">Details</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Create Link for Logged-In Users -->
+@if (User.Identity.IsAuthenticated)
+{
+    <a asp-action="Create" class="btn btn-success mt-3">Add New Template</a>
+}

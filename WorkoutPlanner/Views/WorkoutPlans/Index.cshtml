@@ -1,0 +1,116 @@
+﻿@model IEnumerable<WorkoutPlanner.Models.WorkoutPlan>
+
+@{
+    ViewData["Title"] = "Workout Planner";
+}
+
+<!-- Hero Section -->
+<section class="hero bg-dark text-center py-5">
+    <div class="container">
+        <h1 class="display-4 fw-bold text-light">Build Your Perfect Workout</h1>
+        <p class="lead text-light">Plan, track, and achieve your fitness goals with ease.</p>
+        <div class="mt-4">
+            @if (User.Identity.IsAuthenticated)
+            {
+                <a href="@Url.Action("Calendar", "WorkoutPlans")" class="btn btn-primary btn-lg">Go to Dashboard</a>
+            }
+            else
+            {
+                <a href="@Url.Action("Login", "Account", new { area = "Identity" })" class="btn btn-primary btn-lg">Get Started</a>
+                <a href="@Url.Action("Register", "Account", new { area = "Identity" })" class="btn btn-outline-light btn-lg ms-2">Sign Up</a>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features py-5 bg-light">
+    <div class="container">
+        <div class="row text-center g-4">
+            <div class="col-md-4">
+                <a href="@Url.Action("Calendar", "WorkoutPlans")" class="text-decoration-none text-dark">
+                    <i class="bi bi-calendar2-check display-4 text-primary mb-3"></i>
+                    <h3 class="h4 fw-bold">Plan Your Week</h3>
+                    <p class="text-muted">Drag and drop workouts or choose from templates like Push-Pull-Legs.</p>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a href="@Url.Action("Index", "ExerciseTemplates")" class="text-decoration-none text-dark">
+                    <i class="bi bi-list-task display-4 text-primary mb-3"></i>
+                    <h3 class="h4 fw-bold">Exercise Database</h3>
+                    <p class="text-muted">Explore a growing list of exercises with details and tips.</p>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a href="@Url.Action("Progress", "WorkoutPlans")" class="text-decoration-none text-dark">
+                    <i class="bi bi-graph-up display-4 text-primary mb-3"></i>
+                    <h3 class="h4 fw-bold">Track Progress</h3>
+                    <p class="text-muted">Monitor your gains with a sleek calendar and completion tracking.</p>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-dark text-white text-center py-4">
+    <div class="container">
+        <p class="mb-0">© 2025 Workout Planner. All rights reserved.</p>
+    </div>
+</footer>
+
+<style>
+    .hero {
+        background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/images/fitness-bg.jpg');
+        background-size: cover;
+        background-position: center;
+        min-height: 400px;
+        display: flex;
+        align-items: center;
+    }
+
+        .hero h1 {
+            color: #f8f9fa;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
+            font-size: 3.5rem;
+        }
+
+        .hero p {
+            color: #f8f9fa;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            font-size: 1.25rem;
+        }
+
+    .features {
+        background-color: #f8f9fa;
+    }
+
+        .features a {
+            transition: all 0.3s ease;
+        }
+
+            .features a:hover {
+                text-decoration: none;
+                transform: translateY(-5px);
+            }
+
+        .features i {
+            transition: transform 0.3s ease;
+        }
+
+        .features a:hover i {
+            transform: scale(1.1);
+        }
+
+        .features h3 {
+            color: #343a40;
+        }
+
+    footer {
+        border-top: 1px solid #333;
+    }
+</style>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+}

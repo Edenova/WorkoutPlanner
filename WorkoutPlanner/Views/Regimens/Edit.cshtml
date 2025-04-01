@@ -1,0 +1,74 @@
+﻿@model WorkoutPlanner.Models.RegimenCreateViewModel
+
+<h2 class="mb-4">Edit Regimen</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="@Model.Exercises.Count" /> 
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <h5 class="mb-3">Exercises</h5>
+    <div id="exercise-list">
+        @for (int i = 0; i < Model.Exercises.Count; i++)
+        {
+            <div class="exercise-entry mb-3">
+                <input type="hidden" asp-for="Exercises[i].ExerciseTemplateId" />
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <select name="Exercises[@i].ExerciseTemplateId" class="form-select">
+                            <option value="">Select an exercise</option>
+                            @foreach (var template in ViewBag.ExerciseTemplates)
+                            {
+                                <option value="@template.Id" selected="@(Model.Exercises[i].ExerciseTemplateId == template.Id)">@template.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <input type="number" asp-for="Exercises[i].Sets" class="form-control" placeholder="Sets" min="1" />
+                    </div>
+                    <div class="col-md-2">
+                        <input type="number" asp-for="Exercises[i].Reps" class="form-control" placeholder="Reps" min="1" />
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" class="btn btn-outline-danger remove-exercise">Remove</button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <button type="button" id="add-exercise" class="btn btn-outline-primary mb-3">Add Another Exercise</button>
+
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        $("#add-exercise").click(function () {
+            var count = $(".exercise-entry").length;
+            var clone = $(".exercise-entry:first").clone();
+            clone.find("select").attr("name", "Exercises[" + count + "].ExerciseTemplateId").val("");
+            clone.find("input[name$='.Sets']").attr("name", "Exercises[" + count + "].Sets").val("");
+            clone.find("input[name$='.Reps']").attr("name", "Exercises[" + count + "].Reps").val("");
+            clone.appendTo("#exercise-list");
+        });
+
+        $(document).on("click", ".remove-exercise", function () {
+            if ($(".exercise-entry").length > 1) {
+                $(this).closest(".exercise-entry").remove();
+            }
+        });
+    </script>
+}

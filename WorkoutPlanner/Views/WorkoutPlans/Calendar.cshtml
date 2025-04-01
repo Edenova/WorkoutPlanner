@@ -1,0 +1,153 @@
+﻿@model dynamic
+
+@{
+    ViewData["Title"] = "Workout Calendar";
+}
+
+<h1 class="mb-4 text-center">Workout Calendar</h1>
+@if (User.Identity.IsAuthenticated)
+{
+    <p class="text-center"><a asp-action="Create" class="btn btn-success mb-3">Create New Plan</a></p>
+}
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <div id="calendar"></div>
+    </div>
+</div>
+<div class="mt-3">
+    <h5>Key</h5>
+    <ul class="list-unstyled d-flex flex-wrap gap-3">
+        <li><span class="badge" style="background-color: #e74c3c;"> </span> Upper Body</li>
+        <li><span class="badge" style="background-color: #3498db;"> </span> Lower Body</li>
+        <li><span class="badge" style="background-color: #2ecc71;"> </span> Full Body</li>
+        <li><span class="badge" style="background-color: #f1c40f;"> </span> Cardio</li>
+    </ul>
+</div>
+
+<style>
+    #calendar .fc-event {
+        border-radius: 5px;
+        padding: 2px 5px;
+        cursor: move;
+        overflow: hidden;
+    }
+
+    #calendar .fc-event-upperbody {
+        background-color: #e74c3c; 
+        border-color: #c0392b;
+    }
+
+    #calendar .fc-event-lowerbody {
+        background-color: #3498db; 
+        border-color: #2980b9;
+    }
+
+    #calendar .fc-event-fullbody {
+        background-color: #2ecc71; 
+        border-color: #27ae60;
+    }
+
+    #calendar .fc-event-cardio {
+        background-color: #f1c40f; 
+        border-color: #f39c12;
+    }
+
+    .fc-event-title {
+        white-space: normal; 
+        word-wrap: break-word; 
+        line-height: 1.2; 
+        display: inline-block; 
+        vertical-align: middle; 
+    }
+
+    .fc-event-completed .fc-event-title::after {
+        content: ' ✓';
+        color: white; 
+        font-size: 1.2em;
+        font-weight: bold;
+        margin-left: 5px;
+        vertical-align: middle; 
+    }
+
+    .fc-daygrid-event {
+        padding: 4px; 
+        min-height: 20px; 
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            events: @Html.Raw(ViewBag.Events),
+            editable: true,
+            eventContent: function(arg) {
+                var title = arg.event.title;
+                return { html: '<div class="fc-event-title">' + title + '</div>' };
+            },
+            eventClassNames: function(arg) {
+                var classes = 'fc-event-' + arg.event.extendedProps.workoutType.toLowerCase();
+                if (arg.event.extendedProps.completed) {
+                    classes += ' fc-event-completed';
+                }
+                return classes;
+            },
+            eventDrop: function(info) {
+                console.log('Event dropped:', info.event.id, info.event.start.toISOString());
+    @if (User.Identity.IsAuthenticated)
+    {
+        @:var updateUrl = '@Url.Action("UpdateDate", "WorkoutPlans")';
+        @:var payload = { id: parseInt(info.event.id), newDate: info.event.start.toISOString().split('T')[0] };
+        @:fetch(updateUrl, {
+        @:    method: 'POST',
+        @:    headers: {
+        @:        'Content-Type': 'application/json',
+        @:        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+        @:    },
+        @:    body: JSON.stringify(payload)
+        @:}).then(response => {
+        @:    if (!response.ok) {
+        @:        alert('Failed to update date.');
+        @:        info.revert();
+        @:    }
+        @:}).catch(error => {
+        @:    console.error('Update error:', error);
+        @:    info.revert();
+        @:});
+    }
+    else
+    {
+        @:alert('Please log in to move workouts.');
+        @:info.revert();
+    }
+            },
+            eventClick: function(info) {
+                info.jsEvent.preventDefault();
+                window.location.href = '@Url.Action("Details", "WorkoutPlans")/' + info.event.id;
+            },
+            dateClick: function(info) {
+    @if (User.Identity.IsAuthenticated)
+    {
+        @:window.location.href = '@Url.Action("Create", "WorkoutPlans")' + '?date=' + info.dateStr;
+    }
+    else
+    {
+        @:var createUrl = '@Url.Action("Create", "WorkoutPlans")' + '?date=' + info.dateStr;
+        @:window.location.href = '@Url.Action("Login", "Account", new { area = "Identity" })' + '?returnUrl=' + encodeURIComponent(createUrl);
+    }
+            }
+        });
+        calendar.render();
+    });
+</script>
+
+@section Scripts {
+    <input type="hidden" name="__RequestVerificationToken" value="@Html.AntiForgeryToken()" />
+}

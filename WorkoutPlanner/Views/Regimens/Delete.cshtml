@@ -1,0 +1,27 @@
+﻿@model WorkoutPlanner.Models.Regimen
+
+<h2 class="mb-4">Delete Regimen</h2>
+
+<div class="alert alert-warning">
+    <h4>Are you sure you want to delete "@Model.Name"?</h4>
+    <p>This action cannot be undone.</p>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <p><strong>Description:</strong> @Model.Description</p>
+        <h5>Exercises</h5>
+        <ul>
+            @foreach (var exercise in Model.Exercises)
+            {
+                <li>@exercise.ExerciseTemplate.Name - @exercise.Sets sets x @exercise.Reps reps</li>
+            }
+        </ul>
+    </div>
+</div>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger mt-3">Delete</button>
+    <a asp-action="Index" class="btn btn-outline-secondary mt-3">Cancel</a>
+</form>

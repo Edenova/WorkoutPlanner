@@ -1,0 +1,82 @@
+﻿@model WorkoutPlanner.Models.WorkoutPlan
+
+<h2>@Model.Title</h2>
+<p>Date: @Model.Date.ToShortDateString()</p>
+
+@if (Model.Exercises != null && Model.Exercises.Any())
+{
+    <ul class="list-group">
+        @foreach (var exercise in Model.Exercises)
+        {
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>@exercise.Name</strong><br />
+                    <small>@exercise.Sets sets x @exercise.Reps reps | @exercise.MuscleGroup</small>
+                </div>
+                <div>
+                    <input type="checkbox" class="exercise-check" data-exercise-id="@exercise.Id" onchange="toggleExercise(this, @exercise.Id)">
+                    @if (!string.IsNullOrEmpty(exercise.VideoUrl))
+                    {
+                        <a href="@exercise.VideoUrl" target="_blank" class="btn btn-sm btn-outline-info ml-2">Video</a>
+                    }
+                </div>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p>No exercises defined for this workout.</p>
+}
+
+<div class="mt-3">
+    <button id="mark-complete" data-workout-id="@Model.Id" class="btn btn-success">Mark Complete</button>
+    <a href="@Url.Action("Calendar", "WorkoutPlans")" class="btn btn-outline-primary">Back to Calendar</a>
+    <form asp-action="DeletePlan" asp-route-id="@Model.Id" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this plan?');">
+        @Html.AntiForgeryToken()
+        <button type="submit" class="btn btn-danger">Delete Plan</button>
+    </form>
+</div>
+<div id="status-message" class="mt-2"></div>
+
+@section Scripts {
+    <script>
+        const workoutId = @Html.Raw(Model.Id);
+        const markButton = document.getElementById('mark-complete');
+        const statusMessage = document.getElementById('status-message');
+
+        function toggleExercise(checkbox, exerciseId) {
+            const allCheckboxes = document.querySelectorAll('.exercise-check');
+            const allChecked = allCheckboxes.length === 0 || Array.from(allCheckboxes).every(cb => cb.checked);
+            markButton.disabled = !allChecked;
+        }
+
+        if (document.querySelectorAll('.exercise-check').length === 0) {
+            markButton.disabled = false;
+        }
+
+        markButton.addEventListener('click', function() {
+            fetch('/WorkoutPlans/MarkComplete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: workoutId })
+            })
+            .then(response => {
+                if (response.ok) {
+                    statusMessage.textContent = 'Workout marked complete!';
+                    statusMessage.style.color = 'green';
+                    setTimeout(() => { window.location.href = '@Url.Action("Calendar", "WorkoutPlans")'; }, 1000); // Delay for visibility
+                } else {
+                    return response.text().then(text => {
+                        statusMessage.textContent = text.includes('already marked') ? 'Already completed!' : 'Failed: ' + text;
+                        statusMessage.style.color = 'orange'; 
+                    });
+                }
+            })
+            .catch(error => {
+                statusMessage.textContent = 'Error: ' + error.message;
+                statusMessage.style.color = 'red';
+            });
+        });
+    </script>
+}

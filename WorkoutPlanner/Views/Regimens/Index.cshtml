@@ -1,0 +1,43 @@
+﻿@model List<WorkoutPlanner.Models.Regimen>
+
+<h2 class="mb-4">Workout Regimens</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<!-- Add Create Link -->
+@if (User.Identity.IsAuthenticated)
+{
+    <a asp-action="Create" class="btn btn-success mb-3">Create New Regimen</a>
+}
+
+<div class="row">
+    @foreach (var regimen in Model)
+    {
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">@regimen.Name</h5>
+                    <p class="card-text">@regimen.Description</p>
+                    <ul>
+                        @foreach (var exercise in regimen.Exercises)
+                        {
+                            <li>@exercise.ExerciseTemplate.Name - @exercise.Sets sets x @exercise.Reps reps</li>
+                        }
+                    </ul>
+                    <a asp-action="Details" asp-route-id="@regimen.Id" class="btn btn-outline-primary">Details</a>
+                    @if (ViewBag.CanEditDict[regimen.Id])
+                    {
+                        <a asp-action="Edit" asp-route-id="@regimen.Id" class="btn btn-outline-warning">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@regimen.Id" class="btn btn-outline-danger">Delete</a>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>

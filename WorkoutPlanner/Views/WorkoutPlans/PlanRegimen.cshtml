@@ -1,0 +1,70 @@
+﻿@model WorkoutPlanner.Models.PlanRegimenViewModel
+
+@{
+    ViewData["Title"] = "Plan Regimen";
+}
+
+<h1>Plan Regimen on Calendar</h1>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="PlanRegimen">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="RegimenId" class="control-label">Regimen</label>
+                <select asp-for="RegimenId" class="form-control">
+                    <option value="">-- Select a Regimen --</option>
+                    @foreach (var regimen in ViewBag.Regimens)
+                    {
+                        <option value="@regimen.Id">@regimen.Name</option>
+                    }
+                </select>
+                <span asp-validation-for="RegimenId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StartDate" class="control-label">Start Date</label>
+                <input asp-for="StartDate" type="date" class="form-control" />
+                <span asp-validation-for="StartDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EndDate" class="control-label">End Date</label>
+                <input asp-for="EndDate" type="date" class="form-control" />
+                <span asp-validation-for="EndDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Days of the Week</label>
+                <div>
+                    @foreach (var day in Enum.GetNames(typeof(DayOfWeek)))
+                    {
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" name="SelectedDays" value="@day" id="@day"
+                            @(Model.SelectedDays.Contains(day) ? "checked" : "") />
+                            <label class="form-check-label" for="@day">@day</label>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="form-group">
+                <button type="submit" name="PreviewOnly" value="true" class="btn btn-outline-info">Preview</button>
+                <button type="submit" name="PreviewOnly" value="false" class="btn btn-primary">Save to Calendar</button>
+                <a asp-action="Calendar" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+        </form>
+        @if (ViewBag.PreviewPlans != null)
+        {
+            <h3>Preview</h3>
+            <ul class="list-group">
+                @foreach (var plan in ViewBag.PreviewPlans as List<WorkoutPlan>)
+                {
+                    <li class="list-group-item">@plan.Title - @plan.Date.ToString("MMMM dd, yyyy")</li>
+                }
+            </ul>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

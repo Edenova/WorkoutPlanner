@@ -1,0 +1,25 @@
+﻿@model List<WorkoutPlanner.Models.WorkoutProgress>
+
+<h1 class="mb-4">Workout Progress</h1>
+<div class="card shadow-sm">
+    <div class="card-body">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Workout</th>
+                    <th>Date Completed</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var progress in Model)
+                {
+                    <tr>
+                        <td><a asp-action="Details" asp-route-id="@progress.WorkoutPlanId">@progress.WorkoutPlan.Title</a></td>
+                        <td>@progress.CompletedDate.ToString("MMMM dd, yyyy")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<a asp-action="Calendar" class="btn btn-outline-primary mt-3">Back to Calendar</a>

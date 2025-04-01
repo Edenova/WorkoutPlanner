@@ -1,0 +1,49 @@
+﻿@model WorkoutPlanner.Models.ExerciseTemplate
+
+<h2 class="mb-4">Add a New Exercise Template</h2>
+
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="MuscleGroup" class="form-label"></label>
+        <input asp-for="MuscleGroup" class="form-control" />
+        <span asp-validation-for="MuscleGroup" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Type" class="form-label"></label>
+        <input asp-for="Type" class="form-control" />
+        <span asp-validation-for="Type" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Equipment" class="form-label"></label>
+        <input asp-for="Equipment" class="form-control" />
+        <span asp-validation-for="Equipment" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Difficulty" class="form-label"></label>
+        <input asp-for="Difficulty" type="number" min="1" max="5" class="form-control" />
+        <span asp-validation-for="Difficulty" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="VideoUrl" class="form-label"></label>
+        <input asp-for="VideoUrl" class="form-control" />
+        <span asp-validation-for="VideoUrl" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
