@@ -22,15 +22,15 @@ A modern fitness app to plan, track, and achieve workout goals with an intuitive
 
 ## Screenshots
 - **Homepage**: Clean landing page with clickable features  
-  ![Homepage](screenshots/homepage.png)
+  ![Homepage](screenshots/homepage.PNG)
 - **Calendar**: Interactive workout scheduling with completion indicators  
-  ![Calendar](screenshots/calendar.png)
+  ![Calendar](screenshots/calendar.PNG)
 - **Details**: Detailed workout view with progress tracking  
-  ![Details](screenshots/details.png)
+  ![Details](screenshots/details.PNG)
 
 ## About
 Created by Eden Piatnichko as a showcase of full-stack web development skills.  
 - LinkedIn: www.linkedin.com/in/eden-piatnichko-14a020176
 - GitHub: https://github.com/Edenova
 
-Feedback welcome—happy lifting!
+Feedback welcomeï¿½happy lifting!
